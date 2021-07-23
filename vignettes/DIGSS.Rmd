@@ -23,7 +23,7 @@ library(DIGSS)
 ### Mark Hubbe, Cara Hubbell, William J. Pestle
 
 ---
-Version 0.9.1  August 2021
+Version 1.0.0  July 2021
 ---
 
 ## Introduction to DIGSS
@@ -48,7 +48,7 @@ Running it inside R gives the user the possibility of saving results and further
 
 Running simulations through the Shiny App is considerably more user-friendly, especially for the selection of simulation parameters, but the results are static (i.e., you cannot expand on them easily).
 
-Both versions have the same structure in terms of functions, although the Shiny version has improves visualization html capabilities (including calls for progress bars, more extensive use of ggplot, etc.).
+Both versions have the same structure in terms of functions, although the Shiny version has improved visualization html capabilities (including calls for progress bars, more extensive use of ggplot, etc.).
 
 This **vignette** focuses on the R package version, but comments are always welcome on both versions of it (see [Bug report and comments]).
 
@@ -86,7 +86,7 @@ Parameters are stored in a list of class `surveySim` and can be defined in two w
 
 2.  Editing existing parameters list.
 
-To create parameters for the first time (especially if you are not familiar with R), call `parameterCreator()` . This will start a text input interface which will allow you to create and/or edit a list of parameters named `SurveyParameters`. The image below shows what the initial interface looks like.
+To create parameters for the first time (especially if you are not familiar with R), call `parameterCreator()` . This will start a text input interface which will allow you to create and/or edit a list of parameters named `SurveyParameters`. The screenshot below shows what the initial interface looks like.
 
 ![Screenshot of text input interface for DIGSS parameters](ParCreatorScrShot.png)
 
@@ -127,14 +127,14 @@ my_sim<-surveySim(my_parameters, plot.artifacts = TRUE)
 The summary of results can be accessed from the list, like this:
 
 ```{r print_results}
-knitr::kable(round(my_sim$Summary,2))
+knitr::kable(round(my_sim$Summary,2),caption = "Summary of results for the DIGSS simulations.")
 ```
 
 Results for each site and for each site based on artifacts found on survey pits are also stored in the results list:
 
 ```{r  results_by_site}
-knitr::kable(round(my_sim$BySite,2))
-knitr::kable(round(my_sim$ByArtifact,2))
+knitr::kable(round(my_sim$BySite,2), caption= "Results of survey efficiency in detecting sites.")
+knitr::kable(round(my_sim$ByArtifact,2),caption= "Results of survey efficiency in detecting sites based on artifacts found in surveys")
 ```
 
 Finally, the original parameters used in that simulation are also stored, giving the user the option to access which parameters were used to create the simulation (see them with `my_sim$Parameters`)
@@ -143,7 +143,7 @@ Finally, the original parameters used in that simulation are also stored, giving
 
 Simulations with variable parameters can be run using `surveyLoops()` . This function allows user to vary one of the parameters across any given sets of values, while keeping all other parameters fixed. This function offers an easy way to check the impact of variation in one of the variables being simulated.
 
-`surveyLoop` requires a list of parameters (`SurveySim` class) and a loop variable, which will be a vector or list of vectors with values of one parameter that is to be tested. For details on the format of the loopvariable, see `help(surveyLoops)` . The function will run one simulation for each value in the loop variable, while keeping all the other parameter constant.
+`surveyLoop` requires a list of parameters (`SurveySim` class) and a loop variable, which will be a vector or list of vectors with values of one parameter that is to be tested. For details on the format of the loopvariable, see `help(surveyLoops)` . The function will run one simulation for each value in the loop variable, while keeping all the other parameters constant.
 
 An example to test the impact of variation in the spacing between survey lines can be run like this:
 
@@ -192,11 +192,11 @@ knitr::kable(round(width_loop$successRateIndex,2),caption="Success rate index fo
 
 Finally, multiple simulations can be explored visually using `plotSurveySumm()`.
 
-This function will accept the combined results of multiple single simulations and compare them through density plots. The results from multiple simulations must be combined into a list to be passed from the function.
+This function will accept the combined results of multiple single simulations and compare them through density plots. The results from multiple simulations must be combined into a list to be passed to the function.
 
 You can run the example in `?plotSurveySumm` and get a result similar to this:
 
-![Frequency of sites discovered in across three different DIGSS simulations](Figure3.png){width="500"}
+![Frequency of sites discovered across three different DIGSS simulations](Figure3.png){width="500"}
 
 ## Package structure
 
@@ -226,7 +226,7 @@ The functions in DIGSS adopt a series of different mathematical approaches and a
 
 #### areaEstimator
 
-The real area covered by sites is complex to be calculated, as it may involve the partial overlap of multiple ellipses. Instead, in order to approach the real area coverage of sites, DIGSS uses a cookie-cutter approach. N x N equally spaced points (1000 x 1000 by default) are placed on the survey area and the ratio of points that fall inside at least one site over the total number of points projected returns an approximation of the area. The default values (1,000,000 points) approximates the real area to 0.1%, which is considered sufficient for the purposes of the simulations.
+The real area covered by sites is too complex to be calculated directly, as it may involve the partial overlap of multiple ellipses. Instead, in order to approach the real area coverage of sites, DIGSS uses a cookie-cutter approach. N x N equally spaced points (1000 x 1000 by default) are placed on the survey area and the ratio of points that fall inside at least one site over the total number of points projected returns an approximation of the area. The default values (1,000,000 points) approximates the real area to \~0.1%, which is considered sufficient for the purposes of the simulations.
 
 #### cloudGenerator
 
@@ -236,7 +236,7 @@ The basic approach used to place random points is to create points inside of a r
 
 For sites with uniform density, this is a very efficient way to generate random points. When density is not uniform, density is selected from a random uniform distribution between min and max values provided by user.
 
-For sites with non-uniform artifact distribution (i.e., linear, spherical, sinusoidal), cloudGenerator adopts an onion-layer approach to approximate artifact density. In these cases, sites will be divided into multiple concentric bands, growing from the center of the ellipse. The number of concentric bands is based on the value of `precision` (30 by default). For each band, the average density of pieces in it is defined based on the distance from the center, based on the respective density function selected. Once average density is defined for the band, a rectangle of uniformly distributed points is generated, and only the points that fall inside the band are kept.
+For sites with non-uniform artifact distribution (i.e., linear, spherical, sinusoidal), `cloudGenerator` adopts an onion-layer approach to approximate artifact density. In these cases, sites will be divided into multiple concentric bands, growing from the center of the ellipse. The number of concentric bands is based on the value of `precision` (30 by default). For each band, the average density of pieces in it is defined by the respective density function selected based on the distance from the center. Once average density is defined for the band, a rectangle of uniformly distributed points is generated, and only the points that fall inside the band are kept.
 
 This means that the distribution of artifacts is not truly smooth (as it diminishes from the center in a step-wise manner). However, with large enough layers, it approaches a smooth distribution, and maintains the expected property of the cloud of points (i.e., the average density for the site is respected).
 
@@ -246,15 +246,15 @@ This approach, while wasteful (several coordinates created are dropped during fu
 
 This function creates sites of random positions and angles, matching the parameters given to it (site density, site overlap, site area).
 
-Location of sites are based on random X and Y coordinates of ellipses centers taken from a uniform distribution. Rotation of sites are uniformly random. Sphericity is also uniformly random, but the lower limit has been arbitrarily fixed as 0.85, so that sites are not too elongated by nature.
+Location of sites are based on random X and Y coordinates of ellipses centers taken from a uniform distribution. Rotation of sites are uniformly random. Sphericity is also randomly selected from a uniform distribution, but the lower limit has been arbitrarily fixed as 0.85, so that sites are not too elongated by nature.
 
-Placing of sites happens one at a time, with the coordinates for the new site being checked against previously placed sites to respect the maximum overlap parameter specified by the user. The function will attempt to place a site up to 1000 times, before quitting. If after those attempts, there is no position found for the a new site (i.e., the survey area is too filled to accept a new site and respect the overlap parameters), the sites are not placed and the final number of sites returned will have lower site density than expected. A warning message is thrown in these cases.
+Placing of sites happens one at a time, with the coordinates for the new site being checked against previously placed sites to respect the maximum overlap parameter specified by the user. The function will attempt to place a site up to 1000 times, before quitting. If after those attempts, there is no position found for the new site (i.e., the survey area is too filled to accept a new site and respect the overlap parameters), the sites are not placed and the final number of sites returned will have lower site density than expected. A warning message is thrown in these cases.
 
-When site area is not uniform, the area of each site is taken from a normal distribution based on mean and standard deviations provided. Sites will not be smaller or larger than min and max provided, respectively, to curb the presence of outliers (if desired).
+When site area is not uniform, the area of each site is taken randomly from a normal distribution based on mean and standard deviations provided. Sites will not be smaller or larger than min and max provided, respectively, to curb the presence of outliers (if desired).
 
 #### surveySim
 
-The main function in the package can be very resource intensive because it uses a brute method for counting how many artifacts fall within each survey pit. A few approaches have been implemented to make the function more efficient:
+The main function in the package can be very resource intensive because it uses a brute-force method for counting how many artifacts fall within each survey pit. A few approaches have been implemented to make the function more efficient:
 
 -   `cloudGenerator` is only called when a survey pit hits a site, and then proceeds to count the number of artifacts in all survey pits inside that site. Data for the site generated is cleared, before moving to the next site.
 
