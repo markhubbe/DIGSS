@@ -1,57 +1,66 @@
 #'Parameters creator
 #'
-#'Creates the List of Parameters for SurveySim
+#'Creates the List of Parameters for `surveySim()`
 #'
 #'@details
 #'This function will create a user text interface to define all the arguments required
-#'by the SurveySim function. It generates a list of class `SurveySim()`.
-#'All parameters are loaded inside the function.
-#'
-#'@param col.width the space between columns in the grid IN METERS
-#'@param grid.type options are: "square","rectangle","staggered","hexagonal","arbitrary.staggered", following Kintigh 1988
-#'@param simulations number of random maps to be created and contrasted with the grids
-#'@param Area vector with horizontal and vertical size of area surveyed in km
+#'by the `surveySim` function. It generates a list of class `surveySim()`.
+#'All parameters of this list are loaded inside the function.
+#'\itemize{
+#'\item `col.width` the space between columns in the grid IN METERS
+#'\item `grid.type` options are: "square","rectangle","staggered","hexagonal","arbitrary.staggered", following Kintigh 1988
+#'\item `simulations` number of random maps to be created and contrasted with the grids
+#'\item `area` vector with horizontal and vertical size of area surveyed in km
 #'OBS: Sites will all be ellipses with radii not too different and random angles
-#'@param SiteDensity measured as number of sites/km^2. Can be either one value or a vector with 2 values (min and max) to create a range of densities
-#'@param site.area can be one of two options: 1. one value indicating the area of all sites, in meter^2;
-#' or 2. a vector with 4 values: min, max, mean (or median), and standard deviation in meter^2
-#'@param overlap maximum overlap of site area, ranging from 0 = no overlap allowed to 1 = complete overlap possible
-#'@param obj.density artifacts per m^2. Can be a single value (uniform for all sites) or a range of values defined as min and max
-#'@param obj.distribution type of cloud distribution for artifacts inside sites. Choose from: 'uniform', 'linear', 'spherical', 'sinusoidal'
-#'@param survey.radius the radius of the survey pit (assumed to be a circle)
+#'\item `site.density` measured as number of sites/\ifelse{html}{\out{km<sup>2</sup>}}{\eqn{km^2}}. Can be either one value or a vector with 2 values (min and max) to create a range of densities
+#'\item `site.area` can be one of two options: 1. one value indicating the area of all sites, in \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}};
+#' or 2. a vector with 4 values: min, max, mean (or median), and standard deviation in \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}}
+#'\item `overlap` maximum overlap of site area, ranging from 0 = no overlap allowed to 1 = complete overlap possible
+#'\item `obj.density` artifacts per \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}}. Can be a single value (uniform for all sites) or a range of values defined as min and max
+#'\item `obj.distribution` type of cloud distribution for artifacts inside sites. Choose from: 'uniform', 'linear', 'spherical', 'sinusoidal'
+#'\item `survey.radius` the radius of the survey pit (assumed to be a circle)
+#'}
+#'
+#'@return A list of class `SurveySim` with simulation parameters.
+#'
 #'@references
 #'Kintigh (1988) The Effectiveness of Subsurface Testing: A Simulation Approach.
 #'American Antiquity, 53:686-707.
 #'@examples
-#'ParametersCreator()
+#'parametersCreator()
 
 #'@export
-ParametersCreator<-function(){
+parametersCreator<-function(){
 
   #1.Start checking that the list exists. If it does not, create one
   if(exists("SurveyParameters")==FALSE){
     cat("SurveyParameters not found.\nPlease rename Parameters list to SurveyParameters to edit it or create new one.")
-    Answer<-readline("Do you want to create a new list? y/n:")
-    if(Answer == "y" | Answer == "Y"){
+    answer<-readline("Do you want to create a new list? y/n:")
+    if(answer == "y" | answer == "Y"){
 
       SurveyParameters<-list("col.width"=NA,"grid.type"=NA,"simulations"=NA,"area"=NA,
                              "site.density"=NA,"site.area"=NA,"overlap"=NA,
                              "obj.density"=NA,"obj.distribution"=NA,"survey.radius"=NA)
-      class(SurveyParameters)<-"SurveySim"
+      class(SurveyParameters)<-"surveySim"
       assign("SurveyParameters",SurveyParameters,globalenv())
       listExists=TRUE
     }else{
-      cat("Parameter list creation aborted.")
-
+      return(cat("Parameter list creation aborted."))
     }
   }else{
-    listExists=TRUE
+    answer<-readline(cat("WARNING! This will replace current SurveyParameters in global environment!\n
+                         Do you want to continue? y/n:"))
+    if(answer == "y" | answer == "Y"){
+      listExists=TRUE
+    }else{
+      return(cat("Parameter list creation aborted."))
+    }
   }
   #2. Give the user a list of options to edit
   if(listExists==TRUE){
     continue=TRUE
     while(continue==TRUE){
-      cat("\nLIST OF OPTIONS:\nall - Edit all\n1.Edit col.width       2.Edit grid.type        3.Edit simulations\n4.Edit area            5.Edit site.density     6.Edit site.area\n7.Edit overlap         8.Edit obj.density    9.Edit obj.distrib    \n10.Edit survey.radius\nend - Finish editing   help-Print definition of variables")
+      cat("\nLIST OF OPTIONS:\nall - Edit all\n1.Edit col.width       2.Edit grid.type        3.Edit simulations\n4.Edit area            5.Edit site.density     6.Edit site.area\n7.Edit overlap         8.Edit obj.density     9.Edit obj.distrib    \n10.Edit survey.radius\nend - Finish editing   help-Print definition of variables")
       Answer = readline("Select an option:")
 
       #this finishes the loop
@@ -100,7 +109,6 @@ ParametersCreator<-function(){
 
       #3.Here we start the long list of changing the values in each item of the list.
       #the process is slow, because in some cases the format of item in the list may vary.
-
       if(Items[1]==TRUE){
         Item1=TRUE
         cat("\nINPUT THE NEW VALUE FOR COL.WIDTH\n")
@@ -135,7 +143,6 @@ ParametersCreator<-function(){
             else if(as.numeric(grid.type)==5){grid.typelbl="arbitrary.staggered"}
             else{cat("\nERROR: Select a valid grid type number\n")}
 
-
             if(as.numeric(grid.type)>=1&as.numeric(grid.type)<=5){
               SurveyParameters$grid.type<<-grid.typelbl
               Item2=FALSE
@@ -167,8 +174,8 @@ ParametersCreator<-function(){
       if(Items[4]==TRUE){
         Item4a=TRUE
         Item4b=TRUE
-        cat("\nINPUT THE NEW VALUE FOR AREA\n")
-        cat("Area is vector with horizontal and vertical size of area surveyed in km.\n")
+        cat("\nINPUT THE NEW VALUE FOR area\n")
+        cat("area is vector with horizontal and vertical size of area surveyed in km.\n")
 
         while(Item4a==TRUE | Item4b==TRUE){
           cat("Current value is:\n")
@@ -195,8 +202,6 @@ ParametersCreator<-function(){
           if(Item4a==FALSE &Item4b==FALSE){
             SurveyParameters$area<<-area
           }
-
-
         }
       }
 
@@ -234,13 +239,12 @@ ParametersCreator<-function(){
           }else{
             cat("\nERROR: Choose a valid option.\n")
           }
-
         }
       }
 
       if(Items[6]==TRUE){
         Item6=TRUE
-        cat("\nINPUT THE NEW VALUE FOR SITE AREA\n")
+        cat("\nINPUT THE NEW VALUE FOR SITE area\n")
         cat("site.area: it will be one of two options:\n1. one value indicating the area of all sites, in meter^2\n2. a vector with 4 values: min, max, mean (or median), and standard deviation in meter^2.\n")
 
         while(Item6==TRUE){
@@ -279,7 +283,6 @@ ParametersCreator<-function(){
           }else{
             cat("\nERROR: Choose a valid option.\n")
           }
-
         }
       }
 
@@ -340,7 +343,6 @@ ParametersCreator<-function(){
           }else{
             cat("\nERROR: Choose a valid option.\n")
           }
-
         }
       }
 
@@ -360,7 +362,6 @@ ParametersCreator<-function(){
             else if(as.numeric(obj.distribution)==4){obj.distlbl="sinusoidal"}
             else{cat("\nERROR: Select a valid distribution type\n")}
 
-
             if(as.numeric(obj.distribution)>=1&as.numeric(obj.distribution)<=4){
               SurveyParameters$obj.distribution<<-obj.distlbl
               Item9=FALSE
@@ -369,7 +370,6 @@ ParametersCreator<-function(){
             cat("\nERROR: Select an artifact distribution by its number\n")
           }
         }
-
       }
 
       if(Items[10]==TRUE){
@@ -392,8 +392,6 @@ ParametersCreator<-function(){
           }
         }
       }
-
-
     }
   }
 }

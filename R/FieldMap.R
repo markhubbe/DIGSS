@@ -2,51 +2,65 @@
 #'
 #' Creates randomly placed ellipsoid sites in a rectangular field.
 #'
-#' @details `FieldMap` creates and plots randomly placed ellipses representing
+#' @details `fieldMap` creates and plots randomly placed ellipses representing
 #' archaeological sites. The sites are created inside a user-defined rectangle, with random positions
-#' and random rotations. It allows also to control how of overlap between sites.
+#' and random rotations. It allows also to control the percentage of overlap between sites.
 #'
-#' @param  Area vector with horizontal and vertical size `(hor,ver)` of area surveyed in km.
-#' @param  site.density number of sites/km^2. Can be one constant value or vector with two values `(min, max)` to
+#' @param  area vector with horizontal and vertical size `(hor,ver)` of area surveyed in km.
+#' @param  site.density number of sites/\ifelse{html}{\out{km<sup>2</sup>}}{\eqn{km^2}}. Can be one constant value or vector with two values `(min, max)` to
 #' create a range of densities between simulations.
 #' @param site.area either:
-#'
-#' One values with uniform area for all sites, or
-#'
-#' Vector with 4 values `(min, max, mean, st dev)`, to create variable areas. Areas in this case
+#'\itemize{
+#'\item One values with uniform area for all sites, or
+#'\item Vector with 4 values `(min, max, mean, st dev)`, to create variable areas. areas in this case
 #' are normally distributed based on mean and stdev, but within the range of min and max.
+#' }
 #' @param overlap proportion of overlap possible between sites: from (0 = no overlap allowed to 1 = sites can occupy same space)
-#' @param areaprecision value passed to `AreaEstimator`. Defines precision of area calculation. Default value (`1000`), returns area within 0.1% of real area occupied by sites
+#' @param areaprecision value passed to `areaEstimator`. Defines precision of area calculation. Default value (`1000`), returns area within 0.1% of real area occupied by sites
+#' @param plot whether site ellipses should should be plotted.
+#'
+#'@return A list with three objects: \tabular{ll}{
+#'    \code{site.frame} \tab A matrix with the properties of each site generated. \cr
+#'    \tab \cr
+#'    \code{totalArea} \tab The sum of areas of all site ellipses.\cr
+#'    \tab \cr
+#'    \code{actualArea} \tab The area occupied by the site ellipses taking into account their overlap)\cr
+#'  }
 #'
 #' @examples
 #' #example of map with 8 sites or variable areas and partial overlap
-#' field.example<-FieldMap(Area=c(1,1),site.density=8,site.area=c(50000,250000,150000,50000),overlap=0.5,plot=TRUE)
+#' field.example<-fieldMap(
+#'                  area=c(1,1),
+#'                  site.density=8,
+#'                  site.area=c(50000,250000,150000,50000),
+#'                  overlap=0.5,
+#'                  plot=TRUE)
+#'
+#' @importFrom grDevices rgb
+#' @importFrom graphics axis box lines plot.new plot.window points polygon text title
+#' @importFrom stats rnorm runif
 #'
 #' @export
 
-FieldMap<-function(Area,site.density,site.area,overlap=0.50,plot=FALSE,areaprecision=1000){
+fieldMap<-function(area,site.density,site.area,overlap=0.50,plot=FALSE,areaprecision=1000){
 
   #1. First we create the data.frame that will store the information for all sites.
   if(length(site.density)>1){
-    nsites=ceiling(sample(site.density[1]:site.density[2],1)*Area[1]*Area[2])
+    nsites=ceiling(sample(site.density[1]:site.density[2],1)*area[1]*area[2])
   }else{
-    nsites<-ceiling(site.density*Area[1]*Area[2])
+    nsites<-ceiling(site.density*area[1]*area[2])
   }
 
-  #this will bring the site area to km2
-
+  #this will bring the site area to km^2
   site.area<-site.area/1e6
 
   site.frame<-matrix(0,nsites,8)
 
-  colnames(site.frame)=c("Site","Area","Eccentricity","Angle","center.x","center.y","ellipse.a","ellipse.b")
+  colnames(site.frame)=c("Site","area","Eccentricity","Angle","center.x","center.y","ellipse.a","ellipse.b")
 
-  #We will create a seed of random positions and at each loop we will
-
-  temp.x<-runif(nsites,0,Area[1])
-  temp.y<-runif(nsites,0,Area[2])
-
-  #then we check if sites overlap. If they do, we move them around.
+  #We will create a seed of random positions
+  temp.x<-runif(nsites,0,area[1])
+  temp.y<-runif(nsites,0,area[2])
 
   #2.We fill the data.frame
   for(a in 1:nsites){
@@ -75,7 +89,7 @@ FieldMap<-function(Area,site.density,site.area,overlap=0.50,plot=FALSE,areapreci
     site.frame[a,7]<-(site.frame[a,2]/(pi*(1-site.frame[a,3]^2)^0.5))^0.5
     site.frame[a,8]<-((site.frame[a,2]*(1-site.frame[a,3]^2)^0.5)/pi)^0.5
 
-    #Here is were we remove from the seed vector all points within the ellipsis defined in the loop.
+    #Here is where we attempt to place sites, respecting overlap.
     no.overlaps=FALSE
     cycle.counter=0
 
@@ -87,9 +101,7 @@ FieldMap<-function(Area,site.density,site.area,overlap=0.50,plot=FALSE,areapreci
         #t=atan(g/f)
         angle.a2others<-atan((site.frame[1:(a-1),6]-site.frame[a,6])/(site.frame[1:(a-1),5]-site.frame[a,5]))
 
-
         #d<-sqrt(1/((cos(t-k)^2/a^2+sin(t-k))^2/b^2))
-
         tmpdist.a2others<-sqrt(1/(((cos(angle.a2others-site.frame[a,4])^2/site.frame[a,7]^2)
                                    +(sin(angle.a2others-site.frame[a,4]))^2/site.frame[a,8]^2)))
 
@@ -105,8 +117,8 @@ FieldMap<-function(Area,site.density,site.area,overlap=0.50,plot=FALSE,areapreci
         overlap.index<-tmp.distances<=tmp.maxdistances
 
         if(sum(overlap.index)>0){
-          site.frame[a,5]<-runif(1,0,Area[1])
-          site.frame[a,6]<-runif(1,0,Area[2])
+          site.frame[a,5]<-runif(1,0,area[1])
+          site.frame[a,6]<-runif(1,0,area[2])
           cycle.counter<-cycle.counter+1
         }else{
           no.overlaps=TRUE
@@ -122,16 +134,14 @@ FieldMap<-function(Area,site.density,site.area,overlap=0.50,plot=FALSE,areapreci
     }
 
     sites.created<-a
-
   }
 
 
   #3. Here we plot, if plot = TRUE
-
   if(plot==TRUE){
 
     plot.new()
-    plot.window(c(0,Area[1]),c(0,Area[2]),asp=Area[1]/Area[2])
+    plot.window(c(0,area[1]),c(0,area[2]),asp=area[1]/area[2])
 
     axis(1)
     axis(2)
@@ -150,22 +160,17 @@ FieldMap<-function(Area,site.density,site.area,overlap=0.50,plot=FALSE,areapreci
       ycoords<- site.frame[a,6]+site.frame[a,8]*sin(angles)*cos(site.frame[a,4])+site.frame[a,7]*cos(angles)*sin(site.frame[a,4])
 
       polygon(xcoords,ycoords,col=rgb(0,0,1,0.5),border=NA)
-
     }
-
   }
 
-  #4.We get some of the overall statistics (Sites created, Total Site Area, accurate area of sites) and put them is a list
+  #4.We get some of the overall statistics (Sites created, Total Site area, accurate area of sites) and put them is a list
 
-  results<-list("site.frame"=site.frame,"TotalArea"=NA,"ActualArea"=NA)
+  results<-list("site.frame"=site.frame,"totalArea"=NA,"actualArea"=NA)
 
-  results$TotalArea<-sum(site.frame[,2])
+  results$totalArea<-sum(site.frame[,2])
 
-  #5. Here we get the projected are using AreaEstimator function
-  results$ActualArea<-AreaEstimator(site.frame,Area,areaprecision)
-
+  #5. Here we get the projected are using areaEstimator function
+  results$actualArea<-areaEstimator(site.frame,area,areaprecision)
 
   return(results)
-
-
 }

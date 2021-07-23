@@ -5,7 +5,7 @@
 #' @details
 #' This function will estimate the area occupied by sites (ellipses) in a rectangular
 #' field, taking into consideration the fact that sites can overlap. It is formatted to be used inside
-#' `FieldMap()`.
+#' `fieldMap()`.
 #'
 #' This function is a cookie-cutter area estimator, given the complexities of
 #' calculating the real areas of overlapping ellipses. It projects N x N equally spaced dots in the survey field
@@ -17,19 +17,22 @@
 #'@param fieldarea vector with dimensions of field surveyed in km: `c(x_size,y_size)`
 #'@param precision how many dots will be projected of field. Total dots equal `precision * precision`.
 #'Default value = `1000` (1 million dots projected)
+#'
+#'@return The rate of points that are inside at least one ellipse divided by all points projected in the area.
+#'
 #'@examples
-#'  #create a matrix with 2 sites randomly located using `FieldMap()`
-#'  site.example<-FieldMap(c(1,1),2,250000,plot=TRUE)
+#'  #create a matrix with 2 sites randomly located using `fieldMap()`
+#'  site.example<-fieldMap(c(1,1),2,250000,plot=TRUE)
 #'
 #'  #define size of field
 #'  field.area<-c(1,1)
 #'
 #'  #calculate area
-#'  AreaEstimator(site.example$site.frame,field.area)
+#'  areaEstimator(site.example$site.frame,field.area)
 #'
 #'@export
 
-AreaEstimator<-function(sitemap, fieldarea, precision=1000){
+areaEstimator<-function(sitemap, fieldarea, precision=1000){
 
   nsites<-nrow(sitemap)
   site.frame<-sitemap
@@ -42,13 +45,10 @@ AreaEstimator<-function(sitemap, fieldarea, precision=1000){
   for(a in 1:nsites){
     for(b in 1:length(dotsx)){
 
-   tmpcol<-((dotsx[b]-site.frame[a,5])*cos(site.frame[a,4])+(dotsy-site.frame[a,6])*sin(site.frame[a,4]))^2/(site.frame[a,7])^2+
-      ((dotsx[b]-site.frame[a,5])*sin(site.frame[a,4])-(dotsy-site.frame[a,6])*cos(site.frame[a,4]))^2/(site.frame[a,8])^2<=1
+      tmpcol<-((dotsx[b]-site.frame[a,5])*cos(site.frame[a,4])+(dotsy-site.frame[a,6])*sin(site.frame[a,4]))^2/(site.frame[a,7])^2+
+        ((dotsx[b]-site.frame[a,5])*sin(site.frame[a,4])-(dotsy-site.frame[a,6])*cos(site.frame[a,4]))^2/(site.frame[a,8])^2<=1
 
-
-   areamat[b,which(tmpcol==TRUE)]<-TRUE
-
-
+      areamat[b,which(tmpcol==TRUE)]<-TRUE
     }
   }
 

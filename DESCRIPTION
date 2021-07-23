@@ -2,12 +2,12 @@ Package: DIGSS
 Title: Determination of Intervals Using Georeferenced Survey Simulation
 Version: 0.9.1
 Date: 2020-08-20
-Imports: viridis,ggplot2
+Imports: viridis,ggplot2,stats,grDevices,graphics,utils
 Authors@R: c(person("Mark","Hubbe", role = c("aut", "cre"),email = "hubbe.1@osu.edu"),
 	     person("Cara","Hubbell", role = "aut"),
              person("William", "Pestle", role = "aut"))
-Description: DIGGS is package to simulate the efficiency and efficacy of survey simulations in archaeological and other sub-surface surveysSee Pestle, Hubbell, and Hubbe. Submitted. (DIGSS) Determination of Intervals Using Georeferenced Survey Simulation: An R Package for Subsurface Survey
-License: "GPL-2 | GPL-3"
+Description: DIGGS is package to simulate the efficiency and efficacy of survey simulations in archaeological and other sub-surface surveys. See Pestle, Hubbell, and Hubbe. Submitted. (DIGSS) Determination of Intervals Using Georeferenced Survey Simulation: An R Package for Subsurface Survey.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

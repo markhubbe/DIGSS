@@ -17,7 +17,7 @@ cloudGenerator(
 )
 }
 \arguments{
-\item{density}{dots (artifacts) per m^2}
+\item{density}{dots (artifacts) per \ifelse{html}{\out{m<sup>2</sup>}}{\eqn{m^2}}}
 
 \item{a}{ellipse (site) long axis in km}
 
@@ -30,18 +30,25 @@ cloudGenerator(
 \item{center.y}{center of ellipse in y axis}
 
 \item{type}{type of density distribution. Choose from:
-
-\code{uniform}: dots are uniformly distributed within ellipse
-
-\code{linear}: density of dots decreases linearly from center
-
-\code{spherical}: density of dots decreases following elliptical function (abrupt drop near margins)
-
-\code{sinusoidal}: density of dots decreases following sinusoidal equation}
+\itemize{
+\item \code{uniform}: dots are uniformly distributed within ellipse
+\item \code{linear}: density of dots decreases linearly from center
+\item \code{spherical}: density of dots decreases following elliptical function (abrupt drop near margins)
+\item \code{sinusoidal}: density of dots decreases following sinusoidal equation
+}}
 
 \item{precision}{how many slices of the distribution will be made (more = much slower run times). Default = \code{30}}
 
-\item{plot}{if function should plot results. \strong{function does not work outside \code{SurveySim()}}}
+\item{plot}{if function should plot results. \strong{function does not work outside \code{surveySim()}}}
+}
+\value{
+A list with two objects: \tabular{ll}{
+\code{coords} \tab A list of the bands (N=\code{precision}) that represent the site, each populated with the
+X and Y coordinates for all artifacts generates inside them. \cr
+\tab \cr
+\code{info} \tab A list with the number of pieces created (\verb{$total.pieces}), area of the site (\verb{$total.area}), and
+artifact density in the site (\verb{$actual.density})\cr
+}
 }
 \description{
 Creates a cloud of dots inside ellipsoid sites
@@ -52,23 +59,23 @@ size and shape, to represent the locations of artifacts in a site. The function 
 with different densities profiles. The function uses an "onion-layer" approach to approximate the density of points from the center.
 In practice, it means that each site is composed of N ellipse slices surrounding the previous slice, with each slice
 having a different artifact density depending on the density function selected. This approach also makes
-the \code{SurveySim} function more efficient, since it will search for artifact hits only on the slices that intersect the
+the \code{surveySim} function more efficient, since it will search for artifact hits only on the slices that intersect the
 survey pits.
 }
 \examples{
    #create a small site with low density uniform distribution
    uni.site<-cloudGenerator(0.1,0.1,0.05,pi/4,0.5,0.5,type="u")
 
-   #plot a site with uniform artifact distribution through SurveySim
-   SiteParameters<-ParametersExample
+   #plot a site with uniform artifact distribution through surveySim
+   SiteParameters<-parametersExample
    SiteParameters$simulations=1
    SiteParameters$site.density=1
    SiteParameters$obj.density=0.1
    SiteParameters$obj.distribution = "u"
-   SurveySim(SiteParameters,plot.artifacts = TRUE)
+   surveySim(SiteParameters,plot.artifacts = TRUE)
 
-   #plot a site with sinusoidal artifact distribution through SurveySim
+   #plot a site with sinusoidal artifact distribution through surveySim
    SiteParameters$obj.distribution = "si"
-   SurveySim(SiteParameters,plot.artifacts = TRUE)
+   surveySim(SiteParameters,plot.artifacts = TRUE)
 
 }

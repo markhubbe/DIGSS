@@ -1,46 +1,45 @@
 #' Plot Survey Summaries
 #'
-#' Plots the different results from `SurveySim()`
+#' Plots the different results from `surveySim()`
 #'
-#' @details This function will plot the results of the `SurveySim` Simulations using Kernel Density plots.
+#' @details This function will plot the results of the `surveySim` Simulations using Kernel Density plots.
 #' All the grids that are to be compared should be grouped into 1 list (list(a,b,c,etc...))
-#' The plot function allows you to choose different parts of the survey summaries produced by `SurveySim()` you want to plot.
+#' The plot function allows you to choose different parts of the survey summaries produced by `surveySim()` you want to plot.
 #'
-#' @param SummaryList a list of survey summaries, the output of `SurveySim()`
-#' @param plot what variable to plot. Options are:
-#'
-#'   `sites.found` - plots frequency of sites found
-#'
-#'   `survey.hits` - plots frequency of surveys that hit a site
-#'
-#'   `success.rate.index` - plots the success rate of surveys, i.e. the ratio of successful surveys over total surveys
-#'
-#'   `sites.foundARTI` - plots frequency of sites found **based on artifact present in sites**
-#'
-#'   `survey.hitsARTI` - plots frequency of surveys that found **at least one artifact**
+#' @param summaryList a list of survey summaries, the output of `surveySim()`
+#' @param plot what variable to plot. Options are:\itemize{
+#'\item `sites.found` - plots frequency of sites found
+#'\item `survey.hits` - plots frequency of surveys that hit a site
+#'\item `success.rate.index` - plots the success rate of surveys, i.e. the ratio of successful surveys over total surveys
+#'\item `sites.found.arti` - plots frequency of sites found **based on artifacts present in sites**
+#'\item `survey.hits.arti` - plots frequency of surveys that found **at least one artifact**
+#'}
 #' @param labels vector with name of each item in list, to be added to the legend. If `NULL`, names will be taken from list
 #' @examples
 #'  #create 3 Simulations with sites of different sizes:
-#'  small.sites<-ParametersExample
+#'  small.sites<-parametersExample
 #'  small.sites$site.area=500
 #'
-#'  medium.sites<-ParametersExample
+#'  medium.sites<-parametersExample
 #'  medium.sites$site.area=1000
 #'
-#'  large.sites<-ParametersExample
+#'  large.sites<-parametersExample
 #'  large.sites$site.area=2000
 #'
 #'  #run the 3 simulations
-#'  small.survey<-SurveySim(small.sites)
-#'  medium.survey<-SurveySim(medium.sites)
-#'  large.survey<-SurveySim(large.sites)
+#'  small.survey<-surveySim(small.sites)
+#'  medium.survey<-surveySim(medium.sites)
+#'  large.survey<-surveySim(large.sites)
 #'
 #'  #create the comparative plot.
 #'  #note that the results go into a list. If labels are not given, legend is built on list names
-#'  PlotSurveySumm(list(small.survey,medium.survey,large.survey),plot="sites.found",labels=c("Small sites","Medium sites","Large sites"))
+#'  plotSurveySumm(
+#'        list(small.survey,medium.survey,large.survey),
+#'        plot="sites.found",
+#'        labels=c("Small sites","Medium sites","Large sites"))
 #'
 #' @export
-PlotSurveySumm<-function(SummaryList,plot="sites.found",labels=NULL){
+plotSurveySumm<-function(summaryList,plot="sites.found",labels=NULL){
 
   #1.Define the variable to be plotted
   if(plot=="sites.found"){
@@ -61,44 +60,45 @@ PlotSurveySumm<-function(SummaryList,plot="sites.found",labels=NULL){
     MainTitle="Survey Success Rate Index"
   }
 
-  if(plot=="sites.foundARTI"){
+  if(plot=="sites.found.arti"){
     targetmatrix=3
     targetcol=5
     MainTitle="Frequency of sites discovered by artifact"
   }
 
-  if(plot=="survey.hitsARTI"){
+  if(plot=="survey.hits.arti"){
     targetmatrix=3
     targetcol=6
     MainTitle="Frequency of surveys that located sites by artifact"
   }
 
   #2.Create the data.frame that will be passed to ggplot
-  plotlabels = rep("",length(SummaryList))
+  plotlabels = rep("",length(summaryList))
   plotdata=data.frame(matrix(NA,0,2))
-  means = data.frame(matrix(NA,length(SummaryList),2))
+  means = data.frame(matrix(NA,length(summaryList),2))
 
-  for(a in 1:length(SummaryList)){
+  for(a in 1:length(summaryList)){
     if(is.null(labels)==TRUE){
-      if(is.null(names(SummaryList))==TRUE){
+      if(is.null(names(summaryList))==TRUE){
         plotlabels[a]=paste("Summary",a)
       }else{
-        plotlabels[a]=names(SummaryList)[a]
+        plotlabels[a]=names(summaryList)[a]
       }
     }else{
       plotlabels[a]=labels[a]
     }
 
-    tmp.dataframe<-data.frame(matrix(NA,nrow(SummaryList[[a]][[targetmatrix]]),2))
+    tmp.dataframe<-data.frame(matrix(NA,nrow(summaryList[[a]][[targetmatrix]]),2))
 
-    tmp.dataframe[,1]=rep(plotlabels[a],nrow(SummaryList[[a]][[targetmatrix]]))
-    tmp.dataframe[,2]=SummaryList[[a]][[targetmatrix]][,targetcol]
+    tmp.dataframe[,1]=rep(plotlabels[a],nrow(summaryList[[a]][[targetmatrix]]))
+    tmp.dataframe[,2]=summaryList[[a]][[targetmatrix]][,targetcol]
     plotdata = rbind(plotdata,tmp.dataframe)
 
     means[a,1] = plotlabels[a]
     means[a,2] = mean(tmp.dataframe[,2])
-
   }
+  #this is added just so we do not run into a note in R cmd check
+  groups<-NA
 
   colnames(plotdata)=c("groups","data")
   colnames(means)=c("groups","mean")
@@ -106,17 +106,15 @@ PlotSurveySumm<-function(SummaryList,plot="sites.found",labels=NULL){
   means[,1]<-factor(means[,1])
 
   #3.Create the plot
-  ggplot2::ggplot(plotdata,aes(x=data,color=groups,fill=groups))+
+  ggplot2::ggplot(plotdata,ggplot2::aes(x=data,color=groups,fill=groups))+
     ggplot2::geom_density(alpha=0.5)+
-    ggplot2::geom_vline(data=means,aes(xintercept=mean, color=groups), linetype="dashed", size=1)+
+    ggplot2::geom_vline(data=means,ggplot2::aes(xintercept=mean, color=groups), linetype="dashed", size=1)+
     ggplot2::ggtitle(MainTitle)+
     ggplot2::labs(x=ifelse(plot=="success.rate.index","Success Rate Index","frequency"),
                   color = "Summaries",fill="Summaries")+
-    ggplot2::theme(plot.title = element_text(hjust = 0.5),legend.position = "bottom")+
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),legend.position = "bottom")+
     ggplot2::scale_color_brewer(palette="Dark2")+
     ggplot2::scale_fill_brewer(palette = "Dark2")
-
-
 }
 
 
