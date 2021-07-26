@@ -8,7 +8,7 @@ Authors@R: c(person("Mark","Hubbe", role = c("aut", "cre"),email = "hubbe.1@osu.
              person("William", "Pestle", role = "aut"))
 Description: DIGGS is package to simulate the efficiency and efficacy of survey simulations in archaeological and other sub-surface surveys. See Pestle, Hubbell, and Hubbe. Submitted. (DIGSS) Determination of Intervals Using Georeferenced Survey Simulation: An R Package for Subsurface Survey.
 Maintainer: Mark Hubbe <hubbe.1@osu.edu>
-BugReports: hubbe.1@osu.edu
+BugReports: https://github.com/markhubbe/DIGSS/issues
 URL: https://github.com/markhubbe/DIGSS
 License: MIT + file LICENSE
 Depends: R (>= 3.5)
