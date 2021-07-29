@@ -22,6 +22,7 @@
 #'    }
 #'
 #'@examples
+#'\donttest{
 #'#Runs simulations based on parametersExample
 #'surveyExample<-surveySim(parametersExample)
 #'
@@ -29,7 +30,7 @@
 #'tmp_parameters <-parametersExample
 #'tmp_parameters$simulations<-50
 #'survey50<-surveySim(tmp_parameters)
-#'
+#'}
 #' @importFrom grDevices rainbow rgb
 #' @importFrom graphics axis box lines plot.new plot.window points polygon text title
 #' @importFrom stats quantile rnorm runif sd
@@ -256,7 +257,6 @@ surveySim<-function(survey.parameters, artifact.analysis=TRUE, plot=TRUE, plot.a
                                    *sin(site.frame[b,4]))^2/(site.frame[b,7]*((e-1)/length(artifacts$coords))-survey.radius)^2+
                       ((xvals[d]-site.frame[b,5])*sin(site.frame[b,4])-(yseq[c]-site.frame[b,6])
                        *cos(site.frame[b,4]))^2/(site.frame[b,8]*((e-1)/length(artifacts$coords))-survey.radius)^2>1
-                    #if(tmpBelongOut==TRUE){print(paste("Out:",c,d,e))}
                   }else{
                     tmpBelongOut<-TRUE
                   }
@@ -264,7 +264,7 @@ surveySim<-function(survey.parameters, artifact.analysis=TRUE, plot=TRUE, plot.a
                   if(tmpBelongIn==TRUE&tmpBelongOut==TRUE){
                     artsIN<-((artifacts$coords[[e]][,1]-xvals[d])^2+(artifacts$coords[[e]][,2]-yseq[c])^2)^0.5<=survey.radius
                     artN<-sum(artsIN)
-                    #print(paste("x=",d,"y=",c, "e=",e,"N=",artN))
+
                     tmpArtiCount[d,c]<-tmpArtiCount[d,c]+artN
                   }
                 }

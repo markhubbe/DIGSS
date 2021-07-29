@@ -1,7 +1,7 @@
 Package: DIGSS
 Title: Determination of Intervals Using Georeferenced Survey Simulation
-Version: 1.0.0
-Date: 2021-07-26
+Version: 1.0.1
+Date: 2021-07-29
 Imports: viridis,ggplot2,stats,grDevices,graphics,utils
 Authors@R: c(person("Mark","Hubbe", role = c("aut", "cre"),email = "hubbe.1@osu.edu"),
 	     person("Cara","Hubbell", role = "aut"),
