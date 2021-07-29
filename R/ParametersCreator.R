@@ -1,6 +1,9 @@
 #'Parameters creator
 #'
-#'Creates the List of Parameters for `surveySim()`
+#'Text interface to create the List of Parameters for `surveySim()`
+#'
+#'@param parameters name of object in global environment to be edited. If NULL,
+#'a new empty list is created.
 #'
 #'@details
 #'This function will create a user text interface to define all the arguments required
@@ -27,35 +30,34 @@
 #'Kintigh (1988) The Effectiveness of Subsurface Testing: A Simulation Approach.
 #'American Antiquity, 53:686-707.
 #'@examples
-#'parametersCreator()
-
+#'\dontrun{
+#'#create a list of parameters for SurveySim (text based interface)
+#'my_parameters<-parametersCreator()
+#'}
 #'@export
-parametersCreator<-function(){
+parametersCreator<-function(parameters = NULL){
 
-  #1.Start checking that the list exists. If it does not, create one
-  if(exists("SurveyParameters")==FALSE){
-    cat("SurveyParameters not found.\nPlease rename Parameters list to SurveyParameters to edit it or create new one.")
-    answer<-readline("Do you want to create a new list? y/n:")
-    if(answer == "y" | answer == "Y"){
+  #1.Start checking if user wants to create a new list or edit existing one.
+  if(is.null(parameters)){
+    cat("Creating new list. Input values following the menu below:")
+    SurveyParameters<-list("col.width"=NA,"grid.type"=NA,"simulations"=NA,"area"=NA,
+                           "site.density"=NA,"site.area"=NA,"overlap"=NA,
+                           "obj.density"=NA,"obj.distribution"=NA,"survey.radius"=NA)
+    class(SurveyParameters)<-"surveySim"
+    listExists=TRUE
 
-      SurveyParameters<-list("col.width"=NA,"grid.type"=NA,"simulations"=NA,"area"=NA,
-                             "site.density"=NA,"site.area"=NA,"overlap"=NA,
-                             "obj.density"=NA,"obj.distribution"=NA,"survey.radius"=NA)
-      class(SurveyParameters)<-"surveySim"
-      assign("SurveyParameters",SurveyParameters,globalenv())
-      listExists=TRUE
-    }else{
-      return(cat("Parameter list creation aborted."))
-    }
   }else{
-    answer<-readline(cat("WARNING! This will replace current SurveyParameters in global environment!\n
-                         Do you want to continue? y/n:"))
-    if(answer == "y" | answer == "Y"){
+    if(exists(parameters,envir=.GlobalEnv)){
+      SurveyParameters<-get(parameters,envir=.GlobalEnv)
       listExists=TRUE
+      if(class(SurveyParameters)!="surveySim"){
+        return(cat(paste("Object", parameters, "is not of class 'surveySim.  \nList creation aborted.")))
+      }
     }else{
-      return(cat("Parameter list creation aborted."))
+      return(cat(paste("Object", parameters, "does not exist. \nList creation aborted.")))
     }
   }
+
   #2. Give the user a list of options to edit
   if(listExists==TRUE){
     continue=TRUE
@@ -66,7 +68,8 @@ parametersCreator<-function(){
       #this finishes the loop
       if(substr(Answer,1,1)=="e"){
         continue=FALSE
-        return(cat("Editing completed"))
+        cat("Editing completed")
+        return(SurveyParameters)
       }
 
       #this will print the help (definitions of variables)
@@ -95,7 +98,7 @@ parametersCreator<-function(){
       #Here we create a vector of booleans to see which items will be changed
       Items<-rep(FALSE,10)
 
-      #if "all" is selected, we will adit the whole list
+      #if "all" is selected, we will edit the whole list
       if(substr(Answer,1,1)=="a"){
         Items[1:length(Items)]=TRUE
         continue=FALSE
@@ -115,11 +118,11 @@ parametersCreator<-function(){
         cat("col.width is the space between columns in the grid IN METERS.\n")
 
         while(Item1==TRUE){
-          cat(paste("Current value is:",get("SurveyParameters",envir=.GlobalEnv)$col.width))
+          cat(paste("Current value is:",SurveyParameters$col.width))
           col.width<-readline("New col.width value:")
           if(is.na(suppressWarnings(as.numeric(col.width)))==FALSE){
             col.width<-as.numeric(col.width)
-            SurveyParameters$col.width<<-col.width
+            SurveyParameters$col.width<-col.width
             Item1=FALSE
           }else{
             cat("\nERROR: col.width must be numeric!\n")
@@ -133,7 +136,7 @@ parametersCreator<-function(){
         cat("1. Square\n2. Rectangle\n3. Staggered\n4. Hexagonal\n5. Arbitrary staggered\n")
 
         while(Item2==TRUE){
-          cat(paste("Current grid type is:",get("SurveyParameters",envir=.GlobalEnv)$grid.type))
+          cat(paste("Current grid type is:",SurveyParameters$grid.type))
           grid.type<-readline("New grid.type value:")
           if(is.na(suppressWarnings(as.numeric(grid.type)))==FALSE){
             if(as.numeric(grid.type)==1){grid.typelbl="square"}
@@ -144,7 +147,7 @@ parametersCreator<-function(){
             else{cat("\nERROR: Select a valid grid type number\n")}
 
             if(as.numeric(grid.type)>=1&as.numeric(grid.type)<=5){
-              SurveyParameters$grid.type<<-grid.typelbl
+              SurveyParameters$grid.type<-grid.typelbl
               Item2=FALSE
             }
           }else{
@@ -159,11 +162,11 @@ parametersCreator<-function(){
         cat("simulations is number of random maps to be created and contrasted with the grids.\n")
 
         while(Item3==TRUE){
-          cat(paste("Current value is:",get("SurveyParameters",envir=.GlobalEnv)$simulations))
+          cat(paste("Current value is:",SurveyParameters$simulations))
           sims<-readline("New simulations value:")
           if(is.na(suppressWarnings(as.numeric(sims)))==FALSE){
             sims<-as.numeric(sims)
-            SurveyParameters$simulations<<-sims
+            SurveyParameters$simulations<-sims
             Item3=FALSE
           }else{
             cat("\nERROR: simulations must be numeric!\n")
@@ -179,7 +182,7 @@ parametersCreator<-function(){
 
         while(Item4a==TRUE | Item4b==TRUE){
           cat("Current value is:\n")
-          print(get("SurveyParameters",envir=.GlobalEnv)$area)
+          print(SurveyParameters$area)
           area<-matrix(0,1,2)
           colnames(area)<-c("area.x","area.y")
           row.names(area)<-"km"
@@ -200,7 +203,7 @@ parametersCreator<-function(){
             Item4b=TRUE
           }
           if(Item4a==FALSE &Item4b==FALSE){
-            SurveyParameters$area<<-area
+            SurveyParameters$area<-area
           }
         }
       }
@@ -212,14 +215,14 @@ parametersCreator<-function(){
 
         while(Item5==TRUE){
           cat("Current value is:\n")
-          print(get("SurveyParameters",envir=.GlobalEnv)$site.density)
+          print(SurveyParameters$site.density)
           cat("\nSELECT AN OPTION:\n1. Uniform site density\n2.Site density range")
           density.option<-readline("Make selection: ")
           if(density.option==1){
             site.density<-readline("New site.density value:")
             if(is.na(suppressWarnings(as.numeric(site.density)))==FALSE){
               site.density<-as.numeric(site.density)
-              SurveyParameters$site.density<<-site.density
+              SurveyParameters$site.density<-site.density
               Item5=FALSE
             }else{
               cat("\nERROR: site.density must be numeric!\n")
@@ -231,7 +234,7 @@ parametersCreator<-function(){
             site.density[2]<-readline("New MAX VALUE for site.density:")
             if(is.na(suppressWarnings(as.numeric(site.density[1])))==FALSE&is.na(suppressWarnings(as.numeric(site.density[2])))==FALSE){
               site.density<-as.numeric(site.density)
-              SurveyParameters$site.density<<-site.density
+              SurveyParameters$site.density<-site.density
               Item5=FALSE
             }else{
               cat("\nERROR: One or more site.density values is not numeric!\n")
@@ -249,14 +252,14 @@ parametersCreator<-function(){
 
         while(Item6==TRUE){
           cat("Current value is:\n")
-          print(get("SurveyParameters",envir=.GlobalEnv)$site.area)
+          print(SurveyParameters$site.area)
           cat("\nSELECT AN OPTION:\n1. Uniform site area\n2.Site area range")
           area.option<-readline("Make selection: ")
           if(area.option==1){
             site.area<-readline("New site.area value:")
             if(is.na(suppressWarnings(as.numeric(site.area)))==FALSE){
               site.area<-as.numeric(site.area)
-              SurveyParameters$site.area<<-site.area
+              SurveyParameters$site.area<-site.area
               Item6=FALSE
             }else{
               cat("\nERROR: site.area must be numeric!\n")
@@ -275,7 +278,7 @@ parametersCreator<-function(){
               site.area[1,2]<-as.numeric(area2)
               site.area[1,3]<-as.numeric(area3)
               site.area[1,4]<-as.numeric(area4)
-              SurveyParameters$site.area<<-site.area
+              SurveyParameters$site.area<-site.area
               Item6=FALSE
             }else{
               cat("\nERROR: One or more site.area values is not numeric!\n")
@@ -292,12 +295,12 @@ parametersCreator<-function(){
         cat("overlap is the maximum possible overlap between sites, ranging from 0 as no overlap to 1 as complete overlap.\n")
 
         while(Item7==TRUE){
-          cat(paste("Current value is:",get("SurveyParameters",envir=.GlobalEnv)$overlap))
+          cat(paste("Current value is:",SurveyParameters$overlap))
           overlap<-readline("New overlap value:")
           if(is.na(suppressWarnings(as.numeric(overlap)))==FALSE){
             overlap<-as.numeric(overlap)
             if(overlap>=0&overlap<=1){
-              SurveyParameters$overlap<<-overlap
+              SurveyParameters$overlap<-overlap
               Item7=FALSE
             }else{
               cat("\nERROR: overlap must be between 0 and 1!\n")
@@ -316,14 +319,14 @@ parametersCreator<-function(){
 
         while(Item8==TRUE){
           cat("Current value is:\n")
-          print(get("SurveyParameters",envir=.GlobalEnv)$obj.density)
+          print(SurveyParameters$obj.density)
           cat("\nSELECT AN OPTION:\n1. Uniform artifact density\n2.Artifact density range")
           density.option<-readline("Make selection: ")
           if(density.option==1){
             obj.density<-readline("New object.density value:")
             if(is.na(suppressWarnings(as.numeric(obj.density)))==FALSE){
               obj.density<-as.numeric(obj.density)
-              SurveyParameters$obj.density<<-obj.density
+              SurveyParameters$obj.density<-obj.density
               Item8=FALSE
             }else{
               cat("\nERROR: object.density must be numeric!\n")
@@ -335,7 +338,7 @@ parametersCreator<-function(){
             obj.density[2]<-readline("New MAX VALUE for object.density:")
             if(is.na(suppressWarnings(as.numeric(obj.density[1])))==FALSE&is.na(suppressWarnings(as.numeric(obj.density[2])))==FALSE){
               obj.density<-as.numeric(obj.density)
-              SurveyParameters$obj.density<<-obj.density
+              SurveyParameters$obj.density<-obj.density
               Item8=FALSE
             }else{
               cat("\nERROR: One or more object.density values is not numeric!\n")
@@ -352,7 +355,7 @@ parametersCreator<-function(){
         cat("obj.distribution = type of cloud distribution for artifacts inside sites.\n")
 
         while(Item9==TRUE){
-          cat(paste("Current distribution type is:",get("SurveyParameters",envir=.GlobalEnv)$obj.distribution))
+          cat(paste("Current distribution type is:",SurveyParameters$obj.distribution))
           cat("\nSELECT AN OPTION:\n1. Uniform distribution\n2. Linear distribution\n3. Spherical distribution\n4. Sinusoidal distribution")
           obj.distribution<-readline("New artifact distribution type:")
           if(is.na(suppressWarnings(as.numeric(obj.distribution)))==FALSE){
@@ -363,7 +366,7 @@ parametersCreator<-function(){
             else{cat("\nERROR: Select a valid distribution type\n")}
 
             if(as.numeric(obj.distribution)>=1&as.numeric(obj.distribution)<=4){
-              SurveyParameters$obj.distribution<<-obj.distlbl
+              SurveyParameters$obj.distribution<-obj.distlbl
               Item9=FALSE
             }
           }else{
@@ -378,14 +381,14 @@ parametersCreator<-function(){
         cat("survey.radius = the radius IN METERS of the survey pit (assumed to be a circle for now)\n")
 
         while(Item10==TRUE){
-          cat(paste("Current value is:",get("SurveyParameters",envir=.GlobalEnv)$survey.radius, "m.\n"))
-          if(is.na(get("SurveyParameters",envir=.GlobalEnv)$survey.radius)==FALSE){
-            cat(paste("This represents an area of:",round(get("SurveyParameters",envir=.GlobalEnv)$survey.radius^2*pi,2), "m^2.\n"))
+          cat(paste("Current value is:",SurveyParameters$survey.radius, "m.\n"))
+          if(is.na(SurveyParameters$survey.radius)==FALSE){
+            cat(paste("This represents an area of:",round(SurveyParameters$survey.radius^2*pi,2), "m^2.\n"))
           }
           survey.radius<-readline("New survey.radius value:")
           if(is.na(suppressWarnings(as.numeric(survey.radius)))==FALSE){
             survey.radius<-as.numeric(survey.radius)
-            SurveyParameters$survey.radius<<-survey.radius
+            SurveyParameters$survey.radius<-survey.radius
             Item10=FALSE
           }else{
             cat("\nERROR: survey.radius must be numeric!\n")

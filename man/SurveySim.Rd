@@ -43,6 +43,7 @@ Master function that runs survey simulations
 of survey grids based on the Survey Parameters created by user.
 }
 \examples{
+\donttest{
 #Runs simulations based on parametersExample
 surveyExample<-surveySim(parametersExample)
 
@@ -50,5 +51,5 @@ surveyExample<-surveySim(parametersExample)
 tmp_parameters <-parametersExample
 tmp_parameters$simulations<-50
 survey50<-surveySim(tmp_parameters)
-
+}
 }

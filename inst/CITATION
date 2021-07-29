@@ -8,10 +8,6 @@ citEntry(
 		person("Mark", "Hubbe", role = c("aut","cre"))),
   journal  = "PLoS One",
   year     = "2021",
-  volume   = "tbd",
-  number   = "tbd",
-  pages    = "tbd",
-  url      = "tbd",
   textVersion = "Pestle et al. (2021). (DIGSS): Determination of intervals using georeferenced survey simulation: An R package for subsurface survey. Submitted to PLoS One"
   )
 

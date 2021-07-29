@@ -55,6 +55,7 @@ in efficiency and efficacy of specific variables, while holding every other valu
 runs multiple instances of \code{surveySim} using values of \code{surveyParameters} and replacing one of them with a sequence of values offered by the user.
 }
 \examples{
+\donttest{
 #Loop the impact of increasing distances between survey rows
 width.loop<-surveyLoops(parametersExample,"col.width",c(50,75,100,125,150),"sitesFound")
 
@@ -64,5 +65,5 @@ distr.loop<-surveyLoops(
                "obj.distribution",
                c("uniform","linear","spherical","sinusoidal"),
                "sitesFoundOnArtifacts")
-
+}
 }

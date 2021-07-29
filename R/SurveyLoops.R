@@ -44,6 +44,7 @@
 #'  }
 #'
 #' @examples
+#' \donttest{
 #' #Loop the impact of increasing distances between survey rows
 #' width.loop<-surveyLoops(parametersExample,"col.width",c(50,75,100,125,150),"sitesFound")
 #'
@@ -53,7 +54,7 @@
 #'                "obj.distribution",
 #'                c("uniform","linear","spherical","sinusoidal"),
 #'                "sitesFoundOnArtifacts")
-#'
+#'}
 #' @importFrom grDevices rainbow rgb
 #' @importFrom graphics axis box lines plot.new plot.window points polygon text title
 #'
@@ -96,7 +97,6 @@ surveyLoops<-function(surveyParameters,loopVariable,loopSequence,plotResult){
     stop("ERROR: loopSequence for Area must be a list with 2 vectors (mins and maxs).\n")
   }
 
-  print(loopVariable)
   #2. Here we start with creating the basics and results object
 
   if(is.list(loopSequence)==TRUE){

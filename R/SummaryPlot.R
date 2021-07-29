@@ -16,6 +16,7 @@
 #'}
 #' @param labels vector with name of each item in list, to be added to the legend. If `NULL`, names will be taken from list
 #' @examples
+#'  \donttest{
 #'  #create 3 Simulations with sites of different sizes:
 #'  small.sites<-parametersExample
 #'  small.sites$site.area=500
@@ -37,6 +38,7 @@
 #'        list(small.survey,medium.survey,large.survey),
 #'        plot="sites.found",
 #'        labels=c("Small sites","Medium sites","Large sites"))
+#'}
 #'
 #' @export
 plotSurveySumm<-function(summaryList,plot="sites.found",labels=NULL){

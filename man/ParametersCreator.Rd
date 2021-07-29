@@ -4,13 +4,17 @@
 \alias{parametersCreator}
 \title{Parameters creator}
 \usage{
-parametersCreator()
+parametersCreator(parameters = NULL)
+}
+\arguments{
+\item{parameters}{name of object in global environment to be edited. If NULL,
+a new empty list is created.}
 }
 \value{
 A list of class \code{SurveySim} with simulation parameters.
 }
 \description{
-Creates the List of Parameters for \code{surveySim()}
+Text interface to create the List of Parameters for \code{surveySim()}
 }
 \details{
 This function will create a user text interface to define all the arguments required
@@ -32,7 +36,10 @@ or 2. a vector with 4 values: min, max, mean (or median), and standard deviation
 }
 }
 \examples{
-parametersCreator()
+\dontrun{
+#create a list of parameters for SurveySim (text based interface)
+my_parameters<-parametersCreator()
+}
 }
 \references{
 Kintigh (1988) The Effectiveness of Subsurface Testing: A Simulation Approach.

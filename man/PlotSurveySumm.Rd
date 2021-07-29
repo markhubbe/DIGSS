@@ -28,6 +28,7 @@ All the grids that are to be compared should be grouped into 1 list (list(a,b,c,
 The plot function allows you to choose different parts of the survey summaries produced by \code{surveySim()} you want to plot.
 }
 \examples{
+ \donttest{
  #create 3 Simulations with sites of different sizes:
  small.sites<-parametersExample
  small.sites$site.area=500
@@ -49,5 +50,6 @@ The plot function allows you to choose different parts of the survey summaries p
        list(small.survey,medium.survey,large.survey),
        plot="sites.found",
        labels=c("Small sites","Medium sites","Large sites"))
+}
 
 }
