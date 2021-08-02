@@ -36,7 +36,7 @@
 #'    }
 #'#'@references
 #'Kintigh (1988) The Effectiveness of Subsurface Testing: A Simulation Approach.
-#'American Antiquity, 53:686-707. <DOI:10.2307/281113>
+#'American Antiquity, 53:686-707. \doi{10.2307/281113}
 #'@examples
 #'\donttest{
 #'#Runs simulations based on parametersExample

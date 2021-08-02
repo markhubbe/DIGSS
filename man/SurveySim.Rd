@@ -50,7 +50,7 @@ A list with four objects: \tabular{ll}{
 }
 #'@references
 Kintigh (1988) The Effectiveness of Subsurface Testing: A Simulation Approach.
-American Antiquity, 53:686-707. \url{DOI:10.2307/281113}
+American Antiquity, 53:686-707. \doi{10.2307/281113}
 }
 \description{
 Master function that runs survey simulations
