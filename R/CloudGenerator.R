@@ -2,7 +2,7 @@
 #'
 #' Creates a cloud of dots inside ellipsoid sites
 #'
-#' @details `cloudGenerator` creates a cloud of point inside an ellipsoid site of predefined
+#' @details `cloudGenerator()` creates a cloud of point inside an ellipsoid site of predefined
 #' size and shape, to represent the locations of artifacts in a site. The function can build artifact scatters
 #' with different densities profiles. The function uses an "onion-layer" approach to approximate the density of points from the center.
 #' In practice, it means that each site is composed of N ellipse slices surrounding the previous slice, with each slice
@@ -66,7 +66,7 @@ cloudGenerator<-function(density,a,b,angle,center.x,center.y,type="uniform",prec
     stop(cat("ERROR: invalid cloud distribution type.","Valid types are: uniform,linear,spherical,sinusoidal",sep="\n"))
   }
 
-  #2. get the apropriate piece density for each slice.
+  #2. get the appropriate piece density for each slice.
 
   density.vector<-rep(NA,precision)
 
@@ -77,7 +77,7 @@ cloudGenerator<-function(density,a,b,angle,center.x,center.y,type="uniform",prec
     density.vector<-rep(density,precision)
   }
 
-  if(type==2){#linear
+  else if(type==2){#linear
     linear.x<-seq(0,precision,length=precision+1)
     #we need to calculate what is the proportion of the area in each band, to get the piece density
     area.x<-(pi*(linear.x/precision*a)*(linear.x/precision*b))/(pi*a*b)*precision
@@ -87,7 +87,7 @@ cloudGenerator<-function(density,a,b,angle,center.x,center.y,type="uniform",prec
     density.vector<-(tmpdensity[1:precision]+tmpdensity[2:(precision+1)])/2
   }
 
-  if(type==3){#spherical
+  else if(type==3){#spherical
     linear.x<-seq(0,precision,length=precision+1)
     area.x<-(pi*(linear.x/precision*a)*(linear.x/precision*b))/(pi*a*b)*precision
     densitymax<-4*density/pi
@@ -96,7 +96,7 @@ cloudGenerator<-function(density,a,b,angle,center.x,center.y,type="uniform",prec
     density.vector<-(tmpdensity[1:precision]+tmpdensity[2:(precision+1)])/2
   }
 
-  if(type==4){#sinusoidal
+  else if(type==4){#sinusoidal
     linear.x<-seq(0,precision,length=precision+1)
     area.x<-(pi*(linear.x/precision*a)*(linear.x/precision*b))/(pi*a*b)*precision
 

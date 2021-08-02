@@ -3,10 +3,10 @@
 #' Perform multiple survey simulations changing values on one variable and plot the results
 #'
 #' @details
-#' `surveyLoops` will run a series of simulations along one variable with values
+#' `surveyLoops()` will run a series of simulations along one variable with values
 #'  provided by user. Through this function, the user can simulate and evaluate the changes
 #'  in efficiency and efficacy of specific variables, while holding every other value constant. The function
-#'  runs multiple instances of `surveySim` using values of `surveyParameters` and replacing one of them with a sequence of values offered by the user.
+#'  runs multiple instances of `surveySim()` using values of `surveyParameters` and replacing one of them with a sequence of values offered by the user.
 #'
 #' @param surveyParameters list of parameters (object class `surveySim`)
 #'

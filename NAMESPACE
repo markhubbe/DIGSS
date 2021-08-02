@@ -3,7 +3,6 @@
 export(areaEstimator)
 export(cloudGenerator)
 export(fieldMap)
-export(parametersCreator)
 export(parametersExample)
 export(plotSurveySumm)
 export(surveyLoops)
