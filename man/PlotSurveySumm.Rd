@@ -23,7 +23,7 @@ plotSurveySumm(summaryList, plot = "sites.found", labels = NULL)
 Plots the different results from \code{surveySim()}
 }
 \details{
-This function will plot the results of the \code{surveySim} Simulations using Kernel Density plots.
+This function will plot the results of the \code{surveySim()} simulations using Kernel Density plots.
 All the grids that are to be compared should be grouped into 1 list (list(a,b,c,etc...))
 The plot function allows you to choose different parts of the survey summaries produced by \code{surveySim()} you want to plot.
 }

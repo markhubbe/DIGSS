@@ -49,10 +49,10 @@ A list with five objects: \tabular{ll}{
 Perform multiple survey simulations changing values on one variable and plot the results
 }
 \details{
-\code{surveyLoops} will run a series of simulations along one variable with values
+\code{surveyLoops()} will run a series of simulations along one variable with values
 provided by user. Through this function, the user can simulate and evaluate the changes
 in efficiency and efficacy of specific variables, while holding every other value constant. The function
-runs multiple instances of \code{surveySim} using values of \code{surveyParameters} and replacing one of them with a sequence of values offered by the user.
+runs multiple instances of \code{surveySim()} using values of \code{surveyParameters} and replacing one of them with a sequence of values offered by the user.
 }
 \examples{
 \donttest{

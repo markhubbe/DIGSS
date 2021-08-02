@@ -2,7 +2,7 @@
 #'
 #' Creates randomly placed ellipsoid sites in a rectangular field.
 #'
-#' @details `fieldMap` creates and plots randomly placed ellipses representing
+#' @details `fieldMap()` creates and plots randomly placed ellipses representing
 #' archaeological sites. The sites are created inside a user-defined rectangle, with random positions
 #' and random rotations. It allows also to control the percentage of overlap between sites.
 #'

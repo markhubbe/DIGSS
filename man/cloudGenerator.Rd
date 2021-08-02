@@ -54,7 +54,7 @@ artifact density in the site (\verb{$actual.density})\cr
 Creates a cloud of dots inside ellipsoid sites
 }
 \details{
-\code{cloudGenerator} creates a cloud of point inside an ellipsoid site of predefined
+\code{cloudGenerator()} creates a cloud of point inside an ellipsoid site of predefined
 size and shape, to represent the locations of artifacts in a site. The function can build artifact scatters
 with different densities profiles. The function uses an "onion-layer" approach to approximate the density of points from the center.
 In practice, it means that each site is composed of N ellipse slices surrounding the previous slice, with each slice

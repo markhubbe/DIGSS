@@ -23,7 +23,7 @@ library(DIGSS)
 ### Mark Hubbe, Cara Hubbell, William J. Pestle
 
 ---
-Version 1.0.1  July 2021
+Version 1.0.2  August 2021
 ---
 
 ## Introduction to DIGSS
@@ -44,7 +44,7 @@ DIGSS can be accessed via two different interfaces:
 
 2.  As a Shiny app: <https://markhubbe.shinyapps.io/digss/>
 
-Running it inside R gives the user the possibility of saving results and further exploring the data outcome, but it requires familiarity with R.
+Running it inside R gives the user the possibility of saving results and further exploring the data outputs, but it requires familiarity with R.
 
 Running simulations through the Shiny App is considerably more user-friendly, especially for the selection of simulation parameters, but the results are static (i.e., you cannot expand on them easily).
 
@@ -54,43 +54,58 @@ This **vignette** focuses on the R package version, but comments are always welc
 
 ### 1. Setting simulation parameters
 
-Before running any simulations inside DIGSS, the user must create and/or edit the parameters of the survey area and archaeological sites. The parameters required by the simulations are as follows:
+Before running any simulations inside DIGSS, the user must create and/or edit the parameters of the survey area and archaeological sites. These parameters must be included in items of a list of class `surveySim`.The parameters required by the simulations are as follows:
 
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Parameter                     | Parameter variable | Definition                                                                                                                                                                                                                               |
-+===============================+====================+==========================================================================================================================================================================================================================================+
-| Survey area                   | `area`             | The survey area is defined as a rectangle. Input values for width and length in kilometers.                                                                                                                                              |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Survey spacing                | `col.width`        | The space between survey columns in the grid (in meters).                                                                                                                                                                                |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Survey grid                   | `grid.type`        | Type of survey grid to be superimposed on the survey area. Options are: *square*, *rectangle*, *staggered*, *hexagonal*, *arbitrary.staggered*, following Kintigh (1988).                                                                |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Number of simulations         | `simulations`      | Number of random maps of the survey area to be created and contrasted with the grids.                                                                                                                                                    |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Site density                  | `site.density`     | Measured as number of sites/km^2^. Can be either one value or a vector with two values (min and max) to create a range of variable site densities.                                                                                       |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Sites area                    | `site.area`        | Area of sites to be simulated in the survey area. Can be one of two options: 1. one value indicating a uniform area for all sites, in m^2^; or 2. a vector with four values: min, max, mean (or median), and standard deviation in m^2^. |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Site overlap                  | `overlap`          | Maximum overlap allowed for sites, ranging from 0 = no overlap allowed to 1 = complete overlap possible.                                                                                                                                 |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Artifact density              | `obj.density`      | Artifacts per m^2^. Can be a single value (uniform for all sites) or a range of values defined as min and max.                                                                                                                           |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Artifact density distribution | `obj.density`      | Type of cloud distribution for artifacts inside sites. Choose from: *uniform*, *linear*, *spherical*, *sinusoidal.*                                                                                                                      |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Survey pit radius             | `survey.radius`    | The radius of the survey pit (assumed to be a circle).                                                                                                                                                                                   |
-+-------------------------------+--------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Parameter                     | `SurveySim`item name | Definition                                                                                                                                                                                                                               |
++===============================+======================+==========================================================================================================================================================================================================================================+
+| Survey area                   | `area`               | The survey area is defined as a rectangle. Input values for width and length in kilometers.                                                                                                                                              |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Survey spacing                | `col.width`          | The space between survey columns in the grid (in meters).                                                                                                                                                                                |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Survey grid                   | `grid.type`          | Type of survey grid to be superimposed on the survey area. Options are: *square*, *rectangle*, *staggered*, *hexagonal*, *arbitrary.staggered*, following Kintigh (1988).                                                                |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Number of simulations         | `simulations`        | Number of random maps of the survey area to be created and contrasted with the grids.                                                                                                                                                    |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Site density                  | `site.density`       | Measured as number of sites/km^2^. Can be either one value or a vector with two values (min and max) to create a range of variable site densities.                                                                                       |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Sites area                    | `site.area`          | Area of sites to be simulated in the survey area. Can be one of two options: 1. one value indicating a uniform area for all sites, in m^2^; or 2. a vector with four values: min, max, mean (or median), and standard deviation in m^2^. |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Site overlap                  | `overlap`            | Maximum overlap allowed for sites, ranging from 0 = no overlap allowed to 1 = complete overlap possible.                                                                                                                                 |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Artifact density              | `obj.density`        | Artifacts per m^2^. Can be a single value (uniform for all sites) or a range of values defined as min and max.                                                                                                                           |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Artifact density distribution | `obj.density`        | Type of cloud distribution for artifacts inside sites. Choose from: *uniform*, *linear*, *spherical*, *sinusoidal.*                                                                                                                      |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Survey pit radius             | `survey.radius`      | The radius of the survey pit (assumed to be a circle).                                                                                                                                                                                   |
++-------------------------------+----------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-Parameters are stored in a list of class `surveySim` and can be defined in two ways:
+There are two ways to define the parameters:
 
-1.  Using `parametersCreator()`
+1.  Create a new list of class `surveySim` with simulation parameters.
 
-2.  Editing existing parameters list.
+2.  Edit existing parameters list (easier approach).
 
-To create parameters for the first time (especially if you are not familiar with R), call `my_parameters<-parametersCreator()` . This will start a text input interface which will allow you to create and/or edit a list of parameters that will be saved in a new list called `my_parameters`. The screenshot below shows what the initial interface looks like.
+A new list of parameters can be created directly from the console:
 
-![Screenshot of text input interface for DIGSS parameters](ParCreatorScrShot.png)
+```{r creating_parameters}
+#create list
+my_parameters<-list(col.width = 50,
+                    grid.type = "hexagonal",
+                    simulations = 10,
+                    area = c(0.5,0.5),
+                    site.density = 20,
+                    site.area = 10000,
+                    overlap = 0.5,
+                    obj.density = 1,
+                    obj.distribution = "spherical",
+                    survey.radius = 0.5)
 
-Alternatively, you can edit an existing list by taking advantage of `parametersExample`
+#change class to `SurveySim`
+class(my_parameters)<-"surveySim"
+```
+
+Alternatively, an easier approach is to edit an existing list by taking advantage of `parametersExample`
 
 ```{r editing_parameters}
 #load parametersExample into new list 
@@ -108,7 +123,7 @@ print(my_parameters)
 
 ### 2. Running simulations
 
-Simulations can be done using with one set of parameters at a time, or through a looping function that allows users to vary one parameters over different values.
+Simulations can be done using one set of parameters at a time, or through a looping function that allows users to vary one parameters over different values.
 
 #### Single simulations
 
@@ -156,7 +171,7 @@ width_loop<-surveyLoops(my_parameters, "col.width",c(50,75,100,125),"sitesFound"
 
 ![Example of plot comparing multiple simulations with varying distances between survey lines](Figure2.png){width="500"}
 
-Results are organized inside a list, as with `surveySim`, detailing:
+Results are organized inside a list, as with `surveySim()`, detailing:
 
 -   survey pits per simulation (`$surveysPerSim`)
 
@@ -202,23 +217,21 @@ You can run the example in `?plotSurveySumm` and get a result similar to this:
 
 DIGSS simulations functions (see [2. Running simulations]) rely on specific functions in the package that are called by the simulation functions. Below are all functions that are associated with each of the DIGSS functions:
 
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
-| Function            | Function called  | Task executed                                            | Frequency of call                             |
-+=====================+==================+==========================================================+===============================================+
-| `surveySim`         | `fieldMap`       | creates random sites in survey area                      | once per simulation                           |
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
-|                     | `cloudGenerator` | creates coordinates for artifacts inside sites           | once per site (multiple times per simulation) |
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
-| `surveyLoops`       | `surveySim`      | calculates the ratio of sites located by each survey pit | once per loop                                 |
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
-| `fieldMap`          | `areaEstimator`  | calculates the approximate area covered by sites         | once per execution                            |
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
-| `parametersCreator` | none             |                                                          |                                               |
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
-| `areaEstimator`     | none             |                                                          |                                               |
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
-| `plotSurveySumm`    | none             |                                                          |                                               |
-+---------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
++------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
+| Function         | Function called  | Task executed                                            | Frequency of call                             |
++==================+==================+==========================================================+===============================================+
+| `surveySim`      | `fieldMap`       | creates random sites in survey area                      | once per simulation                           |
++------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
+|                  | `cloudGenerator` | creates coordinates for artifacts inside sites           | once per site (multiple times per simulation) |
++------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
+| `surveyLoops`    | `surveySim`      | calculates the ratio of sites located by each survey pit | once per loop                                 |
++------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
+| `fieldMap`       | `areaEstimator`  | calculates the approximate area covered by sites         | once per execution                            |
++------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
+| `areaEstimator`  | none             |                                                          |                                               |
++------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
+| `plotSurveySumm` | none             |                                                          |                                               |
++------------------+------------------+----------------------------------------------------------+-----------------------------------------------+
 
 ### Calculations and solutions adopted in DIGSS functions
 
@@ -240,7 +253,7 @@ For sites with non-uniform artifact distribution (i.e., linear, spherical, sinus
 
 This means that the distribution of artifacts is not truly smooth (as it diminishes from the center in a step-wise manner). However, with large enough layers, it approaches a smooth distribution, and maintains the expected property of the cloud of points (i.e., the average density for the site is respected).
 
-This approach, while wasteful (several coordinates created are dropped during function execution), saves time during simulations when executed inside `surveySim`. As each concentric band is saved as a different list object, `surveySim` only searches for artifacts that fall inside surveys for the bands where the survey pit is located.
+This approach, while wasteful (several coordinates created are dropped during function execution), saves time during simulations when executed inside `surveySim()`. As each concentric band is saved as a different list object, `surveySim()` only searches for artifacts that fall inside surveys for the bands where the survey pit is located.
 
 #### fieldMap
 
@@ -256,13 +269,13 @@ When site area is not uniform, the area of each site is taken randomly from a no
 
 The main function in the package can be very resource intensive because it uses a brute-force method for counting how many artifacts fall within each survey pit. A few approaches have been implemented to make the function more efficient:
 
--   `cloudGenerator` is only called when a survey pit hits a site, and then proceeds to count the number of artifacts in all survey pits inside that site. Data for the site generated is cleared, before moving to the next site.
+-   `cloudGenerator()` is only called when a survey pit hits a site, and then proceeds to count the number of artifacts in all survey pits inside that site. Data for the site generated is cleared, before moving to the next site.
 
--   The search of artifact coordinates that fall inside each survey pit will be done only within the site band(s) where the pit is located (see `cloudGenerator` above).
+-   The search of artifact coordinates that fall inside each survey pit will be done only within the site band(s) where the pit is located (see `cloudGenerator()` above).
 
 ## Bug report and comments
 
-Submit any comments, bug reports, and suggestions to Mark Hubbe: [hubbe.1\@osu.edu](mailto:hubbe.1@osu.edu)
+Submit any comments, bug reports, and suggestions directly to Mark Hubbe ([hubbe.1\@osu.edu](mailto:hubbe.1@osu.edu)) or via github (<https://github.com/markhubbe/DIGSS/issues>).
 
 ### References
 

@@ -2,7 +2,7 @@
 #'
 #' Plots the different results from `surveySim()`
 #'
-#' @details This function will plot the results of the `surveySim` Simulations using Kernel Density plots.
+#' @details This function will plot the results of the `surveySim()` simulations using Kernel Density plots.
 #' All the grids that are to be compared should be grouped into 1 list (list(a,b,c,etc...))
 #' The plot function allows you to choose different parts of the survey summaries produced by `surveySim()` you want to plot.
 #'
